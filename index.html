@@ -60,12 +60,12 @@
             background: #f8f9fa;
             border-radius: 15px;
             padding: 20px;
-            margin-top: 20px;
+            margin-bottom: 20px;
         }
         .status-item {
             display: flex;
             justify-content: space-between;
-            padding: 12px 0;
+            padding: 8px 0;
             border-bottom: 1px solid #eee;
         }
         .status-item:last-child {
@@ -73,282 +73,726 @@
         }
         .status-label {
             color: #666;
-            font-weight: 500;
         }
         .status-value {
             font-weight: bold;
-            padding: 5px 15px;
-            border-radius: 20px;
-        }
-        .status-value.fatigued {
-            background: #ff6b6b;
-            color: white;
-        }
-        .status-value.alert {
-            background: #ffd93d;
-            color: #333;
         }
         .status-value.normal {
-            background: #6bcb77;
+            color: #28a745;
+        }
+        .status-value.warning {
+            color: #ffc107;
+        }
+        .status-value.danger {
+            color: #dc3545;
+        }
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+        .btn-primary {
+            background: #667eea;
             color: white;
         }
-        .controls {
+        .btn-primary:hover {
+            background: #5a6fd6;
+        }
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+        .btn-danger:hover {
+            background: #c82333;
+        }
+        .mode-switch {
             display: flex;
             justify-content: center;
-            gap: 15px;
-            margin-top: 20px;
+            margin-bottom: 20px;
         }
-        button {
-            padding: 12px 30px;
-            border: none;
-            border-radius: 25px;
-            font-size: 16px;
+        .mode-btn {
+            padding: 10px 30px;
+            border: 2px solid #667eea;
+            background: white;
+            color: #667eea;
+            border-radius: 8px;
             cursor: pointer;
-            transition: all 0.3s ease;
+            font-size: 16px;
+            transition: all 0.3s;
         }
-        #startBtn {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        .mode-btn.active {
+            background: #667eea;
             color: white;
         }
-        #startBtn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        .mode-btn:hover {
+            background: #667eea;
+            color: white;
         }
-        #startBtn:disabled {
-            background: #ccc;
-            cursor: not-allowed;
-            transform: none;
-        }
-        .info {
+        .result-section {
+            display: none;
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 20px;
             margin-top: 20px;
-            padding: 15px;
-            background: #e3f2fd;
-            border-radius: 10px;
-            color: #1565c0;
-            font-size: 14px;
-            line-height: 1.6;
+        }
+        .result-section.show {
+            display: block;
+        }
+        .result-title {
+            text-align: center;
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: #333;
+        }
+        .result-score {
+            text-align: center;
+            font-size: 48px;
+            font-weight: bold;
+            margin: 20px 0;
+        }
+        .result-score.good {
+            color: #28a745;
+        }
+        .result-score.warning {
+            color: #ffc107;
+        }
+        .result-score.danger {
+            color: #dc3545;
+        }
+        .result-desc {
+            text-align: center;
+            color: #666;
+            margin-bottom: 20px;
+        }
+        .result-details {
+            margin-top: 20px;
+        }
+        .result-details h3 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+        .result-details ul {
+            list-style: none;
+        }
+        .result-details li {
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+        }
+        .result-details li:last-child {
+            border-bottom: none;
+        }
+        .tips-section {
+            background: #fff3cd;
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+        .tips-section h3 {
+            color: #856404;
+            margin-bottom: 10px;
+        }
+        .tips-section ul {
+            color: #856404;
+            padding-left: 20px;
+        }
+        .tips-section li {
+            margin: 5px 0;
         }
         .loading {
             text-align: center;
             padding: 40px;
             color: #666;
         }
-        .spinner {
-            width: 50px;
-            height: 50px;
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid #667eea;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 15px;
+        .loading::after {
+            content: '...';
+            animation: dots 1.5s steps(4, end) infinite;
         }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+        @keyframes dots {
+            0%, 20% { content: '.'; }
+            40% { content: '..'; }
+            60%, 100% { content: '...'; }
+        }
+        .hidden {
+            display: none;
+        }
+        .camera-permission {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+        .camera-permission button {
+            margin-top: 20px;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>👁️ 基于MediaPipe的面部疲劳监测系统</h1>
-        <p class="subtitle">实时检测眼部疲劳状态，预防过度用眼</p>
+        <h1>基于MediaPipe的面部疲劳监测系统</h1>
+        <p class="subtitle">实时检测7项疲劳指标，智能评估疲劳程度</p>
+        
+        <div class="mode-switch">
+            <button class="mode-btn active" data-mode="realtime">实时监测模式</button>
+            <button class="mode-btn" data-mode="test">测试模式</button>
+        </div>
         
         <div class="video-container">
             <video id="video" autoplay playsinline></video>
             <canvas id="canvas"></canvas>
         </div>
         
-        <div class="status-panel">
+        <div class="btn-group">
+            <button id="startBtn" class="btn btn-primary">开始监测</button>
+            <button id="stopBtn" class="btn btn-danger hidden">停止监测</button>
+            <button id="resetBtn" class="btn btn-secondary hidden">重置</button>
+        </div>
+        
+        <div id="statusPanel" class="status-panel hidden">
             <div class="status-item">
-                <span class="status-label">系统状态</span>
-                <span class="status-value" id="systemStatus">未启动</span>
+                <span class="status-label">眨眼频率 (次/分钟)</span>
+                <span id="blinkRate" class="status-value">-</span>
             </div>
             <div class="status-item">
-                <span class="status-label">眼部开合度 (EAR)</span>
-                <span class="status-value normal" id="earValue">--</span>
+                <span class="status-label">眨眼幅度 (EAR)</span>
+                <span id="blinkAmplitude" class="status-value">-</span>
             </div>
             <div class="status-item">
-                <span class="status-label">疲劳状态</span>
-                <span class="status-value normal" id="fatigueStatus">正常</span>
+                <span class="status-label">打哈欠频率 (次/分钟)</span>
+                <span id="yawnRate" class="status-value">-</span>
             </div>
             <div class="status-item">
-                <span class="status-label">连续疲劳时长</span>
-                <span class="status-value normal" id="fatigueTime">0 秒</span>
+                <span class="status-label">打哈欠幅度 (MAR)</span>
+                <span id="yawnAmplitude" class="status-value">-</span>
+            </div>
+            <div class="status-item">
+                <span class="status-label">头部倾斜角度 (°)</span>
+                <span id="headTilt" class="status-value">-</span>
+            </div>
+            <div class="status-item">
+                <span class="status-label">头部晃动幅度 (°)</span>
+                <span id="headShake" class="status-value">-</span>
+            </div>
+            <div class="status-item">
+                <span class="status-label">注视时长 (秒)</span>
+                <span id="gazeDuration" class="status-value">-</span>
+            </div>
+            <div class="status-item">
+                <span class="status-label">综合疲劳评分</span>
+                <span id="fatigueScore" class="status-value">-</span>
             </div>
         </div>
         
-        <div class="controls">
-            <button id="startBtn">开始检测</button>
+        <div id="resultSection" class="result-section">
+            <h2 class="result-title">疲劳评估结果</h2>
+            <div id="resultScore" class="result-score">-</div>
+            <p id="resultDesc" class="result-desc">-</p>
+            <div class="result-details">
+                <h3>详细指标</h3>
+                <ul id="resultDetails"></ul>
+            </div>
+            <div class="tips-section">
+                <h3>健康建议</h3>
+                <ul id="tipsList"></ul>
+            </div>
         </div>
         
-        <div class="info">
-            <strong>使用说明：</strong>点击"开始检测"按钮，系统将使用摄像头实时检测您的眼部状态。当眼部开合度低于阈值时，系统会判定为疲劳状态并提醒休息。
+        <div id="loading" class="loading hidden">正在加载模型</div>
+        <div id="cameraPermission" class="camera-permission hidden">
+            <p>请允许访问摄像头以开始监测</p>
+            <button id="retryCamera" class="btn btn-primary">重试</button>
         </div>
     </div>
-
+    
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/control_utils/control_utils.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/face_mesh.js"></script>
+    
     <script>
-        const video = document.getElementById('video');
-        const canvas = document.getElementById('canvas');
-        const ctx = canvas.getContext('2d');
-        const startBtn = document.getElementById('startBtn');
-        const systemStatus = document.getElementById('systemStatus');
-        const earValue = document.getElementById('earValue');
-        const fatigueStatus = document.getElementById('fatigueStatus');
-        const fatigueTime = document.getElementById('fatigueTime');
-        
+        // 全局变量
+        let video, canvas, ctx;
+        let faceMesh;
+        let camera;
         let isRunning = false;
-        let fatigueStartTime = null;
-        let earHistory = [];
-        const EAR_THRESHOLD = 0.25;
-        const FATIGUE_DURATION = 3000; // 3秒持续低EAR判定为疲劳
+        let startTime = null;
+        let blinkCount = 0;
+        let yawnCount = 0;
+        let lastBlinkTime = 0;
+        let lastYawnTime = 0;
+        let blinkAmplitudes = [];
+        let yawnAmplitudes = [];
+        let headAngles = [];
+        let gazeStartTime = null;
+        let lastGazePoint = null;
+        let isGazing = false;
+        let testMode = false;
+        let testInterval = null;
+        let testResults = [];
         
-        // 眼部关键点索引
-        const LEFT_EYE = [33, 133, 160, 158, 159, 144];
-        const RIGHT_EYE = [362, 263, 385, 387, 386, 373];
+        // 阈值配置
+        const THRESHOLDS = {
+            blinkRate: { normal: 15, warning: 20, danger: 25 },
+            blinkAmplitude: { normal: 0.15, warning: 0.12, danger: 0.10 },
+            yawnRate: { normal: 2, warning: 4, danger: 6 },
+            yawnAmplitude: { normal: 0.5, warning: 0.6, danger: 0.7 },
+            headTilt: { normal: 15, warning: 25, danger: 35 },
+            headShake: { normal: 5, warning: 10, danger: 15 },
+            gazeDuration: { normal: 5, warning: 10, danger: 15 }
+        };
         
-        // 计算EAR (Eye Aspect Ratio)
-        function calculateEAR(landmarks, eyeIndices) {
-            const p1 = landmarks[eyeIndices[0]];
-            const p2 = landmarks[eyeIndices[1]];
-            const p3 = landmarks[eyeIndices[2]];
-            const p4 = landmarks[eyeIndices[3]];
-            const p5 = landmarks[eyeIndices[4]];
-            const p6 = landmarks[eyeIndices[5]];
+        // 初始化
+        function init() {
+            video = document.getElementById('video');
+            canvas = document.getElementById('canvas');
+            ctx = canvas.getContext('2d');
             
-            const dist = (a, b) => Math.sqrt(Math.pow(a.x - b.x, 2) + Math.pow(a.y - b.y, 2));
+            faceMesh = new FaceMesh({
+                locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/${file}`
+            });
             
-            const vertical1 = dist(p3, p5);
-            const vertical2 = dist(p4, p6);
-            const horizontal = dist(p1, p2);
+            faceMesh.setOptions({
+                maxNumFaces: 1,
+                refineLandmarks: true,
+                minDetectionConfidence: 0.5,
+                minTrackingConfidence: 0.5
+            });
             
-            return (vertical1 + vertical2) / (2 * horizontal);
-        }
-        
-        // 绘制关键点
-        function drawLandmarks(landmarks) {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
-            ctx.strokeStyle = 'rgba(0, 255, 0, 0.8)';
-            ctx.lineWidth = 2;
+            faceMesh.onResults(onResults);
             
-            // 绘制眼部轮廓
-            [LEFT_EYE, RIGHT_EYE].forEach(indices => {
-                ctx.beginPath();
-                indices.forEach((i, idx) => {
-                    const p = landmarks[i];
-                    const x = p.x * canvas.width;
-                    const y = p.y * canvas.height;
-                    if (idx === 0) ctx.moveTo(x, y);
-                    else ctx.lineTo(x, y);
+            // 绑定按钮事件
+            document.getElementById('startBtn').addEventListener('click', startMonitoring);
+            document.getElementById('stopBtn').addEventListener('click', stopMonitoring);
+            document.getElementById('resetBtn').addEventListener('click', resetMonitoring);
+            document.getElementById('retryCamera').addEventListener('click', startMonitoring);
+            
+            // 模式切换
+            document.querySelectorAll('.mode-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    testMode = btn.dataset.mode === 'test';
+                    if (isRunning) stopMonitoring();
                 });
-                ctx.closePath();
-                ctx.stroke();
-                ctx.fill();
             });
         }
         
-        // 更新状态显示
-        function updateStatus(ear) {
-            earHistory.push(ear);
-            if (earHistory.length > 30) earHistory.shift();
+        // 开始监测
+        async function startMonitoring() {
+            if (isRunning) return;
             
-            const avgEAR = earHistory.reduce((a, b) => a + b, 0) / earHistory.length;
-            earValue.textContent = avgEAR.toFixed(3);
-            
-            const isFatigued = avgEAR < EAR_THRESHOLD;
-            
-            if (isFatigued) {
-                if (!fatigueStartTime) fatigueStartTime = Date.now();
-                const duration = Date.now() - fatigueStartTime;
-                fatigueTime.textContent = (duration / 1000).toFixed(1) + ' 秒';
-                
-                if (duration > FATIGUE_DURATION) {
-                    fatigueStatus.textContent = '⚠️ 疲劳';
-                    fatigueStatus.className = 'status-value fatigued';
-                } else {
-                    fatigueStatus.textContent = '⚡ 预警';
-                    fatigueStatus.className = 'status-value alert';
-                }
-            } else {
-                fatigueStartTime = null;
-                fatigueTime.textContent = '0 秒';
-                fatigueStatus.textContent = '正常';
-                fatigueStatus.className = 'status-value normal';
-            }
-        }
-        
-        // 检测循环
-        async function detect() {
-            if (!isRunning) return;
+            document.getElementById('loading').classList.remove('hidden');
+            document.getElementById('cameraPermission').classList.add('hidden');
+            document.getElementById('statusPanel').classList.add('hidden');
+            document.getElementById('resultSection').classList.remove('show');
             
             try {
-                const results = await faceLandmarksModel.estimateFaces({
-                    input: video,
-                    flipHorizontal: false
-                });
-                
-                if (results.length > 0) {
-                    const landmarks = results[0].scaledMesh;
-                    drawLandmarks(landmarks);
-                    
-                    const leftEar = calculateEAR(landmarks, LEFT_EYE);
-                    const rightEar = calculateEAR(landmarks, RIGHT_EYE);
-                    const ear = (leftEar + rightEar) / 2;
-                    
-                    updateStatus(ear);
-                }
-            } catch (e) {
-                console.error('Detection error:', e);
-            }
-            
-            requestAnimationFrame(detect);
-        }
-        
-        // 初始化
-        async function init() {
-            startBtn.disabled = true;
-            startBtn.textContent = '加载模型中...';
-            
-            try {
-                await faceLandmarksModel.ready();
-                
                 const stream = await navigator.mediaDevices.getUserMedia({
                     video: { width: 640, height: 480 }
                 });
                 video.srcObject = stream;
-                
-                await new Promise(resolve => video.onloadedmetadata = resolve);
+                await video.play();
                 
                 canvas.width = video.videoWidth;
                 canvas.height = video.videoHeight;
                 
-                startBtn.disabled = false;
-                startBtn.textContent = '开始检测';
-            } catch (e) {
-                startBtn.textContent = '摄像头访问失败';
-                console.error('Init error:', e);
+                document.getElementById('loading').classList.add('hidden');
+                document.getElementById('statusPanel').classList.remove('hidden');
+                document.getElementById('startBtn').classList.add('hidden');
+                document.getElementById('stopBtn').classList.remove('hidden');
+                document.getElementById('resetBtn').classList.remove('hidden');
+                
+                isRunning = true;
+                startTime = Date.now();
+                resetStats();
+                
+                if (testMode) {
+                    startTestMode();
+                } else {
+                    camera = new Camera(video, {
+                        onFrame: async () => {
+                            await faceMesh.send({ image: video });
+                        },
+                        width: 640,
+                        height: 480
+                    });
+                    camera.start();
+                }
+            } catch (err) {
+                document.getElementById('loading').classList.add('hidden');
+                document.getElementById('cameraPermission').classList.remove('hidden');
+                console.error('摄像头访问失败:', err);
             }
         }
         
-        startBtn.addEventListener('click', async () => {
-            if (isRunning) {
-                isRunning = false;
-                startBtn.textContent = '开始检测';
-                systemStatus.textContent = '已停止';
-                systemStatus.className = 'status-value normal';
-                return;
+        // 停止监测
+        function stopMonitoring() {
+            isRunning = false;
+            
+            if (camera) {
+                camera.stop();
+                camera = null;
             }
             
-            isRunning = true;
-            startBtn.textContent = '停止检测';
-            systemStatus.textContent = '运行中';
-            systemStatus.className = 'status-value normal';
-            earHistory = [];
-            fatigueStartTime = null;
-            detect();
-        });
+            if (testInterval) {
+                clearInterval(testInterval);
+                testInterval = null;
+            }
+            
+            if (video.srcObject) {
+                video.srcObject.getTracks().forEach(track => track.stop());
+                video.srcObject = null;
+            }
+            
+            document.getElementById('startBtn').classList.remove('hidden');
+            document.getElementById('stopBtn').classList.add('hidden');
+            document.getElementById('resetBtn').classList.add('hidden');
+            
+            // 显示结果
+            showResult();
+        }
         
-        init();
+        // 重置监测
+        function resetMonitoring() {
+            stopMonitoring();
+            resetStats();
+            document.getElementById('resultSection').classList.remove('show');
+            document.getElementById('statusPanel').classList.remove('hidden');
+        }
+        
+        // 重置统计数据
+        function resetStats() {
+            blinkCount = 0;
+            yawnCount = 0;
+            lastBlinkTime = 0;
+            lastYawnTime = 0;
+            blinkAmplitudes = [];
+            yawnAmplitudes = [];
+            headAngles = [];
+            gazeStartTime = null;
+            lastGazePoint = null;
+            isGazing = false;
+            testResults = [];
+        }
+        
+        // 测试模式
+        function startTestMode() {
+            testInterval = setInterval(() => {
+                // 模拟数据
+                const blinkRate = 15 + Math.random() * 15;
+                const blinkAmp = 0.10 + Math.random() * 0.10;
+                const yawnRate = 1 + Math.random() * 5;
+                const yawnAmp = 0.4 + Math.random() * 0.4;
+                const headTilt = 5 + Math.random() * 30;
+                const headShake = 2 + Math.random() * 12;
+                const gazeDuration = 3 + Math.random() * 15;
+                
+                testResults.push({ blinkRate, blinkAmp, yawnRate, yawnAmp, headTilt, headShake, gazeDuration });
+                
+                if (testResults.length >= 10) {
+                    clearInterval(testInterval);
+                    testInterval = null;
+                    
+                    // 计算平均值
+                    const avg = testResults.reduce((acc, r) => ({
+                        blinkRate: acc.blinkRate + r.blinkRate,
+                        blinkAmp: acc.blinkAmp + r.blinkAmp,
+                        yawnRate: acc.yawnRate + r.yawnRate,
+                        yawnAmp: acc.yawnAmp + r.yawnAmp,
+                        headTilt: acc.headTilt + r.headTilt,
+                        headShake: acc.headShake + r.headShake,
+                        gazeDuration: acc.gazeDuration + r.gazeDuration
+                    }), { blinkRate: 0, blinkAmp: 0, yawnRate: 0, yawnAmp: 0, headTilt: 0, headShake: 0, gazeDuration: 0 });
+                    
+                    const count = testResults.length;
+                    updateStatus({
+                        blinkRate: avg.blinkRate / count,
+                        blinkAmp: avg.blinkAmp / count,
+                        yawnRate: avg.yawnRate / count,
+                        yawnAmp: avg.yawnAmp / count,
+                        headTilt: avg.headTilt / count,
+                        headShake: avg.headShake / count,
+                        gazeDuration: avg.gazeDuration / count
+                    });
+                    
+                    showResult();
+                }
+            }, 1000);
+        }
+        
+        // 处理结果
+        function onResults(results) {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.drawImage(results.image, 0, 0, canvas.width, canvas.height);
+            
+            if (results.multiFaceLandmarks && results.multiFaceLandmarks.length > 0) {
+                const landmarks = results.multiFaceLandmarks[0];
+                drawLandmarks(landmarks);
+                
+                const stats = calculateStats(landmarks);
+                updateStatus(stats);
+            }
+        }
+        
+        // 绘制特征点
+        function drawLandmarks(landmarks) {
+            ctx.strokeStyle = '#00ff00';
+            ctx.lineWidth = 1;
+            
+            // 眼睛轮廓
+            const leftEye = [33, 133, 160, 158, 159, 144, 145, 153, 154, 155, 133];
+            const rightEye = [362, 263, 286, 284, 285, 270, 271, 279, 280, 281, 263];
+            
+            ctx.beginPath();
+            leftEye.forEach((idx, i) => {
+                const p = landmarks[idx];
+                const x = p.x * canvas.width;
+                const y = p.y * canvas.height;
+                if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+            });
+            ctx.closePath();
+            ctx.stroke();
+            
+            ctx.beginPath();
+            rightEye.forEach((idx, i) => {
+                const p = landmarks[idx];
+                const x = p.x * canvas.width;
+                const y = p.y * canvas.height;
+                if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+            });
+            ctx.closePath();
+            ctx.stroke();
+            
+            // 嘴巴轮廓
+            const mouth = [61, 185, 40, 39, 37, 0, 267, 269, 270, 409, 291, 308, 324, 318, 402, 317, 14, 87, 178, 88, 95, 61];
+            ctx.beginPath();
+            mouth.forEach((idx, i) => {
+                const p = landmarks[idx];
+                const x = p.x * canvas.width;
+                const y = p.y * canvas.height;
+                if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+            });
+            ctx.closePath();
+            ctx.stroke();
+        }
+        
+        // 计算统计
+        function calculateStats(landmarks) {
+            // 眼睛纵横比 (EAR)
+            const leftEar = calculateEAR(landmarks, [33, 133, 160, 158, 159, 144, 145, 153, 154, 155]);
+            const rightEar = calculateEAR(landmarks, [362, 263, 286, 284, 285, 270, 271, 279, 280, 281]);
+            const ear = (leftEar + rightEar) / 2;
+            
+            // 嘴巴纵横比 (MAR)
+            const mar = calculateMAR(landmarks);
+            
+            // 头部角度
+            const headAngle = calculateHeadAngle(landmarks);
+            
+            // 眨眼检测
+            if (lastBlinkTime > 0 && ear < 0.15) {
+                blinkCount++;
+                blinkAmplitudes.push(lastBlinkTime - ear);
+                lastBlinkTime = 0;
+            } else if (ear < 0.20) {
+                lastBlinkTime = ear;
+            }
+            
+            // 打哈欠检测
+            if (lastYawnTime > 0 && mar > 0.6) {
+                yawnCount++;
+                yawnAmplitudes.push(mar - lastYawnTime);
+                lastYawnTime = 0;
+            } else if (mar > 0.5) {
+                lastYawnTime = mar;
+            }
+            
+            // 头部晃动
+            headAngles.push(headAngle);
+            if (headAngles.length > 30) headAngles.shift();
+            
+            // 注视时长
+            const gazePoint = landmarks[33];
+            if (!lastGazePoint) {
+                lastGazePoint = gazePoint;
+                gazeStartTime = Date.now();
+                isGazing = true;
+            } else {
+                const dist = Math.sqrt(Math.pow(gazePoint.x - lastGazePoint.x, 2) + Math.pow(gazePoint.y - lastGazePoint.y, 2));
+                if (dist > 0.02) {
+                    isGazing = false;
+                    gazeStartTime = Date.now();
+                }
+                lastGazePoint = gazePoint;
+            }
+            
+            const elapsed = (Date.now() - startTime) / 1000;
+            const blinkRate = elapsed > 0 ? (blinkCount / elapsed) * 60 : 0;
+            const yawnRate = elapsed > 0 ? (yawnCount / elapsed) * 60 : 0;
+            const avgBlinkAmp = blinkAmplitudes.length > 0 ? blinkAmplitudes.reduce((a, b) => a + b, 0) / blinkAmplitudes.length : 0;
+            const avgYawnAmp = yawnAmplitudes.length > 0 ? yawnAmplitudes.reduce((a, b) => a + b, 0) / yawnAmplitudes.length : 0;
+            const avgHeadTilt = headAngles.length > 0 ? headAngles.reduce((a, b) => a + b, 0) / headAngles.length : 0;
+            const headShake = headAngles.length > 1 ? Math.max(...headAngles) - Math.min(...headAngles) : 0;
+            const gazeDuration = isGazing ? (Date.now() - gazeStartTime) / 1000 : 0;
+            
+            return { blinkRate, blinkAmp: avgBlinkAmp, yawnRate, yawnAmp: avgYawnAmp, headTilt: avgHeadTilt, headShake, gazeDuration };
+        }
+        
+        // 计算EAR
+        function calculateEAR(landmarks, indices) {
+            const p1 = landmarks[indices[0]], p2 = landmarks[indices[5]];
+            const p3 = landmarks[indices[1]], p4 = landmarks[indices[3]];
+            const p5 = landmarks[indices[2]], p6 = landmarks[indices[4]];
+            
+            const d1 = Math.sqrt(Math.pow(p2.x - p1.x, 2) + Math.pow(p2.y - p1.y, 2));
+            const d2 = Math.sqrt(Math.pow(p4.x - p3.x, 2) + Math.pow(p4.y - p3.y, 2));
+            const d3 = Math.sqrt(Math.pow(p6.x - p5.x, 2) + Math.pow(p6.y - p5.y, 2));
+            
+            return (d2 + d3) / (2 * d1);
+        }
+        
+        // 计算MAR
+        function calculateMAR(landmarks) {
+            const p1 = landmarks[61], p2 = landmarks[0];
+            const p3 = landmarks[185], p4 = landmarks[14];
+            const p5 = landmarks[40], p6 = landmarks[37];
+            const p7 = landmarks[39], p8 = landmarks[409];
+            
+            const d1 = Math.sqrt(Math.pow(p2.x - p1.x, 2) + Math.pow(p2.y - p1.y, 2));
+            const d2 = Math.sqrt(Math.pow(p4.x - p3.x, 2) + Math.pow(p4.y - p3.y, 2));
+            const d3 = Math.sqrt(Math.pow(p6.x - p5.x, 2) + Math.pow(p6.y - p5.y, 2));
+            const d4 = Math.sqrt(Math.pow(p8.x - p7.x, 2) + Math.pow(p8.y - p7.y, 2));
+            
+            return (d1 + d2 + d3 + d4) / (4 * Math.sqrt(Math.pow(p2.x - p1.x, 2) + Math.pow(p2.y - p1.y, 2)));
+        }
+        
+        // 计算头部角度
+        function calculateHeadAngle(landmarks) {
+            const nose = landmarks[1];
+            const leftEye = landmarks[33];
+            const rightEye = landmarks[362];
+            
+            const dx = rightEye.x - leftEye.x;
+            const dy = rightEye.y - leftEye.y;
+            
+            return Math.abs(Math.atan2(dy, dx) * 180 / Math.PI);
+        }
+        
+        // 更新状态面板
+        function updateStatus(stats) {
+            document.getElementById('blinkRate').textContent = stats.blinkRate.toFixed(1);
+            document.getElementById('blinkAmplitude').textContent = stats.blinkAmp.toFixed(3);
+            document.getElementById('yawnRate').textContent = stats.yawnRate.toFixed(1);
+            document.getElementById('yawnAmplitude').textContent = stats.yawnAmp.toFixed(3);
+            document.getElementById('headTilt').textContent = stats.headTilt.toFixed(1);
+            document.getElementById('headShake').textContent = stats.headShake.toFixed(1);
+            document.getElementById('gazeDuration').textContent = stats.gazeDuration.toFixed(1);
+            
+            const score = calculateFatigueScore(stats);
+            document.getElementById('fatigueScore').textContent = score;
+        }
+        
+        // 计算疲劳评分
+        function calculateFatigueScore(stats) {
+            let score = 0;
+            
+            // 眨眼频率
+            if (stats.blinkRate > THRESHOLDS.blinkRate.danger) score += 20;
+            else if (stats.blinkRate > THRESHOLDS.blinkRate.warning) score += 10;
+            
+            // 眨眼幅度
+            if (stats.blinkAmp < THRESHOLDS.blinkAmplitude.danger) score += 20;
+            else if (stats.blinkAmp < THRESHOLDS.blinkAmplitude.warning) score += 10;
+            
+            // 打哈欠频率
+            if (stats.yawnRate > THRESHOLDS.yawnRate.danger) score += 20;
+            else if (stats.yawnRate > THRESHOLDS.yawnRate.warning) score += 10;
+            
+            // 打哈欠幅度
+            if (stats.yawnAmp > THRESHOLDS.yawnAmplitude.danger) score += 20;
+            else if (stats.yawnAmp > THRESHOLDS.yawnAmplitude.warning) score += 10;
+            
+            // 头部倾斜
+            if (stats.headTilt > THRESHOLDS.headTilt.danger) score += 10;
+            else if (stats.headTilt > THRESHOLDS.headTilt.warning) score += 5;
+            
+            // 头部晃动
+            if (stats.headShake > THRESHOLDS.headShake.danger) score += 10;
+            else if (stats.headShake > THRESHOLDS.headShake.warning) score += 5;
+            
+            // 注视时长
+            if (stats.gazeDuration > THRESHOLDS.gazeDuration.danger) score += 10;
+            else if (stats.gazeDuration > THRESHOLDS.gazeDuration.warning) score += 5;
+            
+            return Math.min(score, 100);
+        }
+        
+        // 显示结果
+        function showResult() {
+            const score = parseInt(document.getElementById('fatigueScore').textContent) || 0;
+            const statusPanel = document.getElementById('statusPanel');
+            const resultSection = document.getElementById('resultSection');
+            const resultScore = document.getElementById('resultScore');
+            const resultDesc = document.getElementById('resultDesc');
+            const resultDetails = document.getElementById('resultDetails');
+            const tipsList = document.getElementById('tipsList');
+            
+            resultSection.classList.add('show');
+            resultScore.textContent = score;
+            resultScore.className = 'result-score ' + (score < 30 ? 'good' : score < 60 ? 'warning' : 'danger');
+            
+            let desc = '';
+            let tips = [];
+            if (score < 30) {
+                desc = '您的疲劳程度较低，状态良好';
+                tips = ['保持当前状态，继续工作', '适当休息，保持精力充沛'];
+            } else if (score < 60) {
+                desc = '您有轻度疲劳，建议适当休息';
+                tips = ['起身活动5-10分钟', '远眺放松眼睛', '喝杯水补充水分'];
+            } else {
+                desc = '您有中度至重度疲劳，建议立即休息';
+                tips = ['立即停止工作，休息15-30分钟', '闭目养神，放松眼部肌肉', '进行深呼吸放松', '如持续疲劳，请就医检查'];
+            }
+            
+            resultDesc.textContent = desc;
+            resultDetails.innerHTML = '';
+            tipsList.innerHTML = '';
+            
+            const items = [
+                ['眨眼频率', document.getElementById('blinkRate').textContent],
+                ['眨眼幅度', document.getElementById('blinkAmplitude').textContent],
+                ['打哈欠频率', document.getElementById('yawnRate').textContent],
+                ['打哈欠幅度', document.getElementById('yawnAmplitude').textContent],
+                ['头部倾斜', document.getElementById('headTilt').textContent],
+                ['头部晃动', document.getElementById('headShake').textContent],
+                ['注视时长', document.getElementById('gazeDuration').textContent]
+            ];
+            
+            items.forEach(([label, value]) => {
+                resultDetails.innerHTML += `<li>${label}: ${value}</li>`;
+            });
+            
+            tips.forEach(tip => {
+                tipsList.innerHTML += `<li>${tip}</li>`;
+            });
+        }
+        
+        // 页面加载完成后初始化
+        window.addEventListener('load', init);
     </script>
 </body>
 </html>
