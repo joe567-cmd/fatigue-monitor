@@ -1,0 +1,1143 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>面部疲劳监测系统</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --primary: #0a1628;
+  --secondary: #1a2942;
+  --accent: #00d4ff;
+  --accent-dim: #0088aa;
+  --success: #00ff88;
+  --warning: #ffaa00;
+  --danger: #ff4466;
+  --text: #e8f4f8;
+  --text-dim: #8899aa;
+  --glass: rgba(26, 41, 66, 0.85);
+}
+
+body {
+  font-family: -apple-system, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  background: linear-gradient(135deg, var(--primary) 0%, #0d1f3c 50%, #0a1628 100%);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+.screen { display: none; min-height: 100vh; }
+.screen.active { display: flex; flex-direction: column; }
+
+/* ========== 首页 ========== */
+#homeScreen {
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+}
+
+.home-header {
+  text-align: center;
+  margin-bottom: 50px;
+}
+
+.home-header h1 {
+  font-size: 2.8rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, var(--accent), #66eeff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 12px;
+}
+
+.home-header p {
+  color: var(--text-dim);
+  font-size: 1.1rem;
+  max-width: 500px;
+  line-height: 1.6;
+}
+
+.mode-cards {
+  display: flex;
+  gap: 24px;
+  flex-wrap: wrap;
+  justify-content: center;
+  max-width: 700px;
+}
+
+.mode-card {
+  background: var(--glass);
+  border: 1px solid rgba(0, 212, 255, 0.2);
+  border-radius: 16px;
+  padding: 36px 32px;
+  width: 300px;
+  cursor: pointer;
+  transition: all 0.3s;
+  position: relative;
+  overflow: hidden;
+}
+
+.mode-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--accent), #66eeff);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.mode-card:hover {
+  border-color: var(--accent);
+  transform: translateY(-4px);
+  box-shadow: 0 12px 40px rgba(0, 212, 255, 0.15);
+}
+
+.mode-card:hover::before { opacity: 1; }
+
+.mode-card .icon { font-size: 2.5rem; margin-bottom: 16px; }
+.mode-card h3 { font-size: 1.3rem; margin-bottom: 8px; }
+.mode-card .duration { font-size: 2rem; font-weight: 700; color: var(--accent); margin-bottom: 8px; }
+.mode-card .desc { color: var(--text-dim); font-size: 0.9rem; line-height: 1.5; }
+
+.home-footer {
+  margin-top: 40px;
+  text-align: center;
+  color: var(--text-dim);
+  font-size: 0.85rem;
+}
+
+.home-footer .indicators {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 12px;
+}
+
+.home-footer .tag {
+  background: rgba(0, 212, 255, 0.1);
+  border: 1px solid rgba(0, 212, 255, 0.2);
+  border-radius: 20px;
+  padding: 4px 14px;
+  font-size: 0.8rem;
+  color: var(--accent);
+}
+
+/* ========== 监测页 ========== */
+#monitorScreen {
+  padding: 20px;
+  align-items: center;
+}
+
+.monitor-header {
+  width: 100%;
+  max-width: 900px;
+  margin-bottom: 16px;
+}
+
+.progress-bar-container {
+  background: var(--secondary);
+  border-radius: 12px;
+  height: 8px;
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+
+.progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent), var(--success));
+  border-radius: 12px;
+  transition: width 0.5s linear;
+  width: 0%;
+}
+
+.progress-info {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.9rem;
+  color: var(--text-dim);
+}
+
+.progress-info .time-left { color: var(--accent); font-weight: 600; font-size: 1rem; }
+
+.monitor-body {
+  display: flex;
+  gap: 24px;
+  width: 100%;
+  max-width: 900px;
+  flex: 1;
+  min-height: 0;
+}
+
+.video-container {
+  flex: 1;
+  position: relative;
+  background: var(--secondary);
+  border-radius: 16px;
+  overflow: hidden;
+  aspect-ratio: 4/3;
+  max-height: 480px;
+}
+
+.video-container video,
+.video-container canvas {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  object-fit: cover;
+}
+
+.video-container canvas { pointer-events: none; }
+
+.video-label {
+  position: absolute;
+  top: 12px; left: 12px;
+  background: rgba(0, 0, 0, 0.6);
+  padding: 4px 12px;
+  border-radius: 8px;
+  font-size: 0.75rem;
+  color: var(--accent);
+  z-index: 10;
+}
+
+.metrics-panel {
+  width: 240px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.metric-card {
+  background: var(--glass);
+  border: 1px solid rgba(0, 212, 255, 0.15);
+  border-radius: 12px;
+  padding: 14px 16px;
+}
+
+.metric-card .label {
+  font-size: 0.75rem;
+  color: var(--text-dim);
+  margin-bottom: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.metric-card .value {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--accent);
+}
+
+.metric-card .value .unit {
+  font-size: 0.7rem;
+  color: var(--text-dim);
+  font-weight: 400;
+}
+
+.monitor-footer {
+  margin-top: 16px;
+  display: flex;
+  gap: 12px;
+}
+
+.btn {
+  padding: 12px 28px;
+  border: none;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-outline {
+  background: transparent;
+  border: 1px solid var(--accent-dim);
+  color: var(--accent);
+}
+
+.btn-outline:hover { background: rgba(0, 212, 255, 0.1); }
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--accent), var(--accent-dim));
+  color: var(--primary);
+}
+
+.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0, 212, 255, 0.3); }
+
+/* ========== 结果页 ========== */
+#resultScreen {
+  padding: 40px 20px;
+  align-items: center;
+}
+
+.result-header {
+  text-align: center;
+  margin-bottom: 36px;
+}
+
+.result-header h2 {
+  font-size: 1.8rem;
+  margin-bottom: 8px;
+}
+
+.score-display {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 32px;
+}
+
+.score-circle {
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  margin-bottom: 16px;
+}
+
+.score-circle::before {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border-radius: 50%;
+  padding: 4px;
+  background: conic-gradient(var(--accent) var(--score-pct, 0%), transparent 0%);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+}
+
+.score-circle .score-num {
+  font-size: 3.5rem;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.score-circle .score-label {
+  font-size: 0.85rem;
+  color: var(--text-dim);
+  margin-top: 4px;
+}
+
+.fatigue-level {
+  font-size: 1.3rem;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.fatigue-suggestion {
+  color: var(--text-dim);
+  font-size: 0.95rem;
+  text-align: center;
+  max-width: 400px;
+}
+
+.result-details {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  max-width: 800px;
+  width: 100%;
+  margin-bottom: 32px;
+}
+
+.detail-card {
+  background: var(--glass);
+  border: 1px solid rgba(0, 212, 255, 0.15);
+  border-radius: 12px;
+  padding: 18px 20px;
+}
+
+.detail-card .detail-label {
+  font-size: 0.8rem;
+  color: var(--text-dim);
+  margin-bottom: 6px;
+}
+
+.detail-card .detail-value {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.detail-card .detail-unit {
+  font-size: 0.75rem;
+  color: var(--text-dim);
+  font-weight: 400;
+}
+
+.result-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+/* ========== 权限提示 ========== */
+.permission-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(10, 22, 40, 0.95);
+  z-index: 1000;
+  align-items: center;
+  justify-content: center;
+}
+
+.permission-overlay.active { display: flex; }
+
+.permission-box {
+  background: var(--glass);
+  border: 1px solid rgba(0, 212, 255, 0.3);
+  border-radius: 20px;
+  padding: 40px;
+  max-width: 420px;
+  text-align: center;
+}
+
+.permission-box .icon { font-size: 3rem; margin-bottom: 16px; }
+.permission-box h3 { font-size: 1.3rem; margin-bottom: 12px; }
+.permission-box p { color: var(--text-dim); line-height: 1.6; margin-bottom: 20px; font-size: 0.9rem; }
+
+/* ========== 响应式 ========== */
+@media (max-width: 768px) {
+  .home-header h1 { font-size: 2rem; }
+  .mode-cards { flex-direction: column; align-items: center; }
+  .mode-card { width: 100%; max-width: 340px; }
+  .monitor-body { flex-direction: column; }
+  .metrics-panel { width: 100%; flex-direction: row; flex-wrap: wrap; }
+  .metric-card { flex: 1; min-width: 100px; }
+  .video-container { max-height: 300px; }
+  .result-details { grid-template-columns: repeat(2, 1fr); }
+}
+</style>
+</head>
+<body>
+
+<!-- 首页 -->
+<div id="homeScreen" class="screen active">
+  <div class="home-header">
+    <h1>面部疲劳监测系统</h1>
+    <p>基于面部特征识别，通过摄像头实时分析眨眼、嘴部状态和头部运动，评估您的疲劳程度</p>
+  </div>
+
+  <div class="mode-cards">
+    <div class="mode-card" data-primary-action="select-mode" onclick="startTest(90)">
+      <div class="icon">&#9889;</div>
+      <h3>快速测试</h3>
+      <div class="duration">90秒</div>
+      <div class="desc">快速评估当前疲劳状态，适合日常快速筛查</div>
+    </div>
+    <div class="mode-card" data-primary-action="select-mode" onclick="startTest(180)">
+      <div class="icon">&#128269;</div>
+      <h3>标准测试</h3>
+      <div class="duration">3分钟</div>
+      <div class="desc">更充分的数据采集，提供更准确的疲劳评估结果</div>
+    </div>
+  </div>
+
+  <div class="home-footer">
+    <p>监测指标</p>
+    <div class="indicators">
+      <span class="tag">眨眼次数</span>
+      <span class="tag">PERCLOS</span>
+      <span class="tag">眼睑闭合</span>
+      <span class="tag">嘴部状态</span>
+      <span class="tag">打哈欠</span>
+      <span class="tag">点头/低头</span>
+      <span class="tag">歪头</span>
+    </div>
+  </div>
+</div>
+
+<!-- 监测页 -->
+<div id="monitorScreen" class="screen">
+  <div class="monitor-header">
+    <div class="progress-bar-container">
+      <div class="progress-bar" id="progressBar"></div>
+    </div>
+    <div class="progress-info">
+      <span id="testModeLabel">测试模式</span>
+      <span class="time-left" id="timeLeft">剩余 --秒</span>
+    </div>
+  </div>
+
+  <div class="monitor-body">
+    <div class="video-container">
+      <div class="video-label">&#128247; 实时监测中</div>
+      <video id="video" autoplay playsinline></video>
+      <canvas id="overlay"></canvas>
+    </div>
+
+    <div class="metrics-panel">
+      <div class="metric-card">
+        <div class="label">实时 EAR</div>
+        <div class="value"><span id="rtEAR">--</span> <span class="unit" id="earStatus">等待检测</span></div>
+      </div>
+      <div class="metric-card">
+        <div class="label">眨眼次数</div>
+        <div class="value"><span id="rtBlink">0</span> <span class="unit">次</span></div>
+      </div>
+      <div class="metric-card">
+        <div class="label">PERCLOS</div>
+        <div class="value"><span id="rtPerclos">0.0</span><span class="unit">%</span></div>
+      </div>
+      <div class="metric-card">
+        <div class="label">打哈欠</div>
+        <div class="value"><span id="rtYawn">0</span> <span class="unit">次</span></div>
+      </div>
+      <div class="metric-card">
+        <div class="label">点头/低头</div>
+        <div class="value"><span id="rtNod">0</span> <span class="unit">次</span></div>
+      </div>
+      <div class="metric-card">
+        <div class="label">歪头</div>
+        <div class="value"><span id="rtTilt">0</span> <span class="unit">次</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="monitor-footer">
+    <button class="btn btn-outline" onclick="endTest()">结束测试</button>
+  </div>
+</div>
+
+<!-- 结果页 -->
+<div id="resultScreen" class="screen">
+  <div class="result-header">
+    <h2>疲劳评估报告</h2>
+    <p style="color:var(--text-dim)" id="resultDuration">监测时长：--</p>
+  </div>
+
+  <div class="score-display">
+    <div class="score-circle" id="scoreCircle" style="--score-pct:0%">
+      <div class="score-num" id="scoreNum">0</div>
+      <div class="score-label">疲劳分数</div>
+    </div>
+    <div class="fatigue-level" id="fatigueLevel">--</div>
+    <div class="fatigue-suggestion" id="fatigueSuggestion">--</div>
+  </div>
+
+  <div class="result-details" id="resultDetails"></div>
+
+  <div class="result-actions">
+    <button class="btn btn-outline" onclick="exportReport()" data-primary-action="export-report">下载报告</button>
+    <button class="btn btn-primary" onclick="goHome()">重新测试</button>
+  </div>
+</div>
+
+<!-- 权限提示 -->
+<div class="permission-overlay" id="permOverlay">
+  <div class="permission-box">
+    <div class="icon">&#128247;</div>
+    <h3>需要摄像头权限</h3>
+    <p>疲劳监测需要使用摄像头，请在浏览器弹窗中点击"允许"以启用摄像头访问。所有数据仅在本地处理，不会上传到任何服务器。</p>
+    <button class="btn btn-primary" onclick="retryCamera()">重新授权</button>
+    <br><br>
+    <button class="btn btn-outline" onclick="goHome()">返回首页</button>
+  </div>
+</div>
+
+<!-- MediaPipe -->
+<script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/face_mesh.js" crossorigin="anonymous"></script>
+
+<script>
+// ========== 全局状态 ==========
+let testDuration = 90;
+let testStartTime = 0;
+let testTimer = null;
+let isRunning = false;
+let camera = null;
+let faceMesh = null;
+let lastResult = null;
+let lastAvgEAR = 0;
+
+// 指标
+let metrics = {
+  blinkCount: 0,
+  perclosFrames: 0,
+  totalFrames: 0,
+  closureDuration: 0,
+  mouthOpenCount: 0,
+  yawnCount: 0,
+  nodCount: 0,
+  tiltCount: 0,
+};
+
+// 状态追踪
+let eyeState = { closed: false, closeTime: 0 };
+let mouthState = { open: false, openTime: 0, maxMAR: 0 };
+let headState = { lastPitch: null, lastRoll: null, lastNodTime: 0, lastTiltTime: 0 };
+
+// 阈值
+const EAR_THRESHOLD = 0.25;
+const PERCLOS_THRESHOLD = 0.28;
+const MAR_THRESHOLD = 0.15;
+const YAWN_MAR_THRESHOLD = 0.25;
+const YAWN_MIN_MS = 1000;
+const YAWN_MAX_MS = 4000;
+const HEAD_NOD_DELTA_MIN = 0.025;
+const HEAD_NOD_DURATION_FRAMES = 8;
+const HEAD_TILT_THRESH = 15;
+const HEAD_TILT_DURATION_FRAMES = 8;
+
+// 头部姿态平滑
+let headPitchBaseline = null;
+let headPitchWindow = [];
+const HEAD_PITCH_WINDOW = 60;
+
+// 持续性计数器
+let nodSustainCount = 0;
+let tiltSustainCount = 0;
+
+// ========== 工具函数 ==========
+function getDist(lm, i1, i2) {
+  const dx = lm[i1].x - lm[i2].x;
+  const dy = lm[i1].y - lm[i2].y;
+  return Math.sqrt(dx * dx + dy * dy);
+}
+
+// ========== EAR 计算（标准6点法，修正索引） ==========
+function calcEAR(lm) {
+  // 左眼：P1=33(左眼角), P2=160(上睑外), P3=158(上睑内), P4=133(右眼角), P5=153(下睑内), P6=144(下睑外)
+  const lH = getDist(lm, 33, 133);
+  const lV1 = getDist(lm, 160, 144);
+  const lV2 = getDist(lm, 158, 153);
+  const leftEAR = lH > 0.001 ? (lV1 + lV2) / (2.0 * lH) : 0;
+
+  // 右眼：P1=362, P2=385(上睑外), P3=387(上睑内), P4=263, P5=380(下睑内), P6=373(下睑外)
+  const rH = getDist(lm, 362, 263);
+  const rV1 = getDist(lm, 385, 373);
+  const rV2 = getDist(lm, 387, 380);
+  const rightEAR = rH > 0.001 ? (rV1 + rV2) / (2.0 * rH) : 0;
+
+  return { left: leftEAR, right: rightEAR, avg: (leftEAR + rightEAR) / 2 };
+}
+
+// 嘴巴纵横比 MAR
+function calcMAR(lm) {
+  const v = getDist(lm, 13, 14);
+  const h = getDist(lm, 61, 291);
+  return h > 0.001 ? v / h : 0;
+}
+
+// 头部姿态（归一化版）
+function calcHeadPose(lm) {
+  const noseX = lm[1].x;
+  const noseY = lm[1].y;
+  const leftEyeX = lm[33].x;
+  const leftEyeY = lm[33].y;
+  const rightEyeX = lm[263].x;
+  const rightEyeY = lm[263].y;
+  const eyeMidX = (leftEyeX + rightEyeX) / 2;
+  const eyeMidY = (leftEyeY + rightEyeY) / 2;
+
+  // 用面部高度归一化
+  const faceTopY = lm[10].y;
+  const faceBottomY = lm[152].y;
+  const faceHeight = Math.max(0.001, faceBottomY - faceTopY);
+
+  // 归一化pitch：鼻子相对于眼睛中点的垂直偏移 / 面部高度
+  const pitch = (noseY - eyeMidY) / faceHeight;
+  const roll = Math.atan2(rightEyeY - leftEyeY, rightEyeX - leftEyeX) * 180 / Math.PI;
+
+  return { pitch: pitch, roll: roll };
+}
+
+// ========== 页面切换 ==========
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(function(s) { s.classList.remove('active'); });
+  document.getElementById(id).classList.add('active');
+}
+
+function goHome() {
+  stopMonitoring();
+  showScreen('homeScreen');
+}
+
+// ========== 开始测试 ==========
+function startTest(duration) {
+  testDuration = duration;
+  resetMetrics();
+  showScreen('monitorScreen');
+  document.getElementById('testModeLabel').textContent =
+    duration === 90 ? '快速测试 (90秒)' : '标准测试 (3分钟)';
+  document.getElementById('timeLeft').textContent = '正在启动...';
+  document.getElementById('progressBar').style.width = '0%';
+
+  stopMonitoring();
+
+  var video = document.getElementById('video');
+  var canvas = document.getElementById('overlay');
+
+  // 创建 FaceMesh
+  faceMesh = new FaceMesh({
+    locateFile: function(file) {
+      return 'https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/' + file;
+    }
+  });
+
+  faceMesh.setOptions({
+    maxNumFaces: 1,
+    refineLandmarks: true,
+    minDetectionConfidence: 0.5,
+    minTrackingConfidence: 0.5
+  });
+
+  faceMesh.onResults(function(results) {
+    if (!isRunning) return;
+
+    canvas.width = video.videoWidth || 640;
+    canvas.height = video.videoHeight || 480;
+    var ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    if (results.multiFaceLandmarks && results.multiFaceLandmarks.length > 0) {
+      var lm = results.multiFaceLandmarks[0];
+
+      try {
+        if (typeof drawConnectors !== 'undefined' && typeof FACEMESH_TESSELATION !== 'undefined') {
+          drawConnectors(ctx, lm, FACEMESH_TESSELATION, { color: 'rgba(0,212,255,0.15)', lineWidth: 0.5 });
+          drawConnectors(ctx, lm, FACEMESH_FACE_OVAL, { color: 'rgba(0,212,255,0.4)', lineWidth: 1 });
+        }
+      } catch (e) {}
+
+      processLandmarks(lm);
+    }
+    updateRealtimeDisplay();
+  });
+
+  // 创建 Camera 并启动（Camera 会自动开始发送帧）
+  camera = new Camera(video, {
+    onFrame: function() {
+      if (isRunning) {
+        return faceMesh.send({ image: video });
+      }
+    },
+    width: 640,
+    height: 480
+  });
+
+  // Camera.start() 会获取摄像头权限并开始帧循环
+  camera.start().then(function() {
+    console.log('[Fatigue] Camera started, model loading...');
+    testStartTime = Date.now();
+    isRunning = true;
+    startTimer();
+  }).catch(function(err) {
+    console.error('[Fatigue] Camera start failed:', err);
+    document.getElementById('permOverlay').classList.add('active');
+  });
+}
+
+function retryCamera() {
+  document.getElementById('permOverlay').classList.remove('active');
+  startTest(testDuration);
+}
+
+// ========== 核心指标计算 ==========
+function processLandmarks(lm) {
+  var now = Date.now();
+  metrics.totalFrames++;
+
+  // --- 眼睛 EAR ---
+  var ear = calcEAR(lm);
+  var avgEAR = ear.avg;
+  lastAvgEAR = avgEAR;
+
+  if (metrics.totalFrames % 30 === 1) {
+    console.log('[Fatigue] F' + metrics.totalFrames + ': EAR=' + avgEAR.toFixed(3) +
+      ' L=' + ear.left.toFixed(3) + ' R=' + ear.right.toFixed(3) +
+      ' blinks=' + metrics.blinkCount + ' perclos=' + metrics.perclosFrames +
+      ' pitch=' + (headState.currPitch !== null ? headState.currPitch.toFixed(3) : '?') +
+      ' roll=' + (headState.currRoll !== null ? headState.currRoll.toFixed(1) : '?'));
+  }
+
+  // PERCLOS
+  if (avgEAR < PERCLOS_THRESHOLD) {
+    metrics.perclosFrames++;
+  }
+
+  // 眨眼检测（狭窄的闭眼窗口 + 延迟释放）
+  if (avgEAR < EAR_THRESHOLD) {
+    if (!eyeState.closed) {
+      eyeState.closed = true;
+      eyeState.closeTime = now;
+    }
+  } else {
+    if (eyeState.closed) {
+      eyeState.closed = false;
+      var dur = now - eyeState.closeTime;
+      // 眨眼：20-300ms，太短(<20ms)是噪声，太长(>300ms)是闭眼
+      if (dur >= 30 && dur < 300) {
+        metrics.blinkCount++;
+      } else if (dur >= 300) {
+        metrics.closureDuration += dur / 1000;
+      }
+    }
+  }
+
+  // --- 嘴巴 MAR ---
+  var mar = calcMAR(lm);
+
+  if (mar > MAR_THRESHOLD) {
+    if (!mouthState.open) {
+      mouthState.open = true;
+      mouthState.openTime = now;
+      mouthState.maxMAR = mar;
+    } else {
+      mouthState.maxMAR = Math.max(mouthState.maxMAR, mar);
+    }
+  } else {
+    if (mouthState.open) {
+      mouthState.open = false;
+      var dur2 = now - mouthState.openTime;
+      metrics.mouthOpenCount++;
+
+      // 打哈欠：嘴巴张开幅度大(>YAWN_MAR_THRESHOLD)且持续时间>1秒
+      if (dur2 >= YAWN_MIN_MS && dur2 <= YAWN_MAX_MS && mouthState.maxMAR > YAWN_MAR_THRESHOLD) {
+        metrics.yawnCount++;
+      }
+    }
+  }
+
+  // --- 头部姿态（基线自适应 + 动态阈值） ---
+  var head = calcHeadPose(lm);
+  headState.currPitch = head.pitch;
+  headState.currRoll = head.roll;
+
+  // 采集前 60 帧建立基线
+  headPitchWindow.push(head.pitch);
+  if (headPitchWindow.length > HEAD_PITCH_WINDOW) {
+    headPitchWindow.shift();
+  }
+
+  if (metrics.totalFrames >= HEAD_PITCH_WINDOW && headPitchBaseline === null) {
+    // 基线 = 窗口均值
+    headPitchBaseline = headPitchWindow.reduce(function(a, b) { return a + b; }, 0) / headPitchWindow.length;
+    console.log('[Fatigue] Head pitch baseline set: ' + headPitchBaseline.toFixed(3));
+  }
+
+  // 初始化 lastPitch（第一次运行时）
+  if (headState.lastPitch === null) {
+    headState.lastPitch = head.pitch;
+    headState.lastRoll = head.roll;
+  }
+
+  if (headPitchBaseline !== null) {
+    // 当前 pitch 与基线的偏差
+    var pitchDelta = Math.abs(head.pitch - headPitchBaseline);
+
+    // 点头检测：偏差超过阈值时计数，连续 N 帧才触发
+    if (pitchDelta > HEAD_NOD_DELTA_MIN) {
+      nodSustainCount++;
+      if (nodSustainCount >= HEAD_NOD_DURATION_FRAMES && now - headState.lastNodTime > 2000) {
+        metrics.nodCount++;
+        headState.lastNodTime = now;
+        nodSustainCount = 0;
+        console.log('[Fatigue] Nod detected: pitch=' + head.pitch.toFixed(3) +
+          ' baseline=' + headPitchBaseline.toFixed(3) + ' delta=' + pitchDelta.toFixed(3));
+      }
+    } else {
+      nodSustainCount = Math.max(0, nodSustainCount - 1);
+    }
+  }
+
+  // 歪头检测：同样用持续帧判定
+  if (Math.abs(head.roll) > HEAD_TILT_THRESH) {
+    tiltSustainCount++;
+    if (tiltSustainCount >= HEAD_TILT_DURATION_FRAMES && now - headState.lastTiltTime > 2000) {
+      metrics.tiltCount++;
+      headState.lastTiltTime = now;
+      tiltSustainCount = 0;
+    }
+  } else {
+    tiltSustainCount = Math.max(0, tiltSustainCount - 1);
+  }
+
+  headState.lastPitch = head.pitch;
+  headState.lastRoll = head.roll;
+}
+
+// ========== 实时显示 ==========
+function updateRealtimeDisplay() {
+  var earEl = document.getElementById('rtEAR');
+  var statusEl = document.getElementById('earStatus');
+  if (earEl) {
+    earEl.textContent = lastAvgEAR.toFixed(3);
+    earEl.style.color = lastAvgEAR < EAR_THRESHOLD ? '#ff4444' : '#00ff88';
+  }
+  if (statusEl) {
+    statusEl.textContent = lastAvgEAR < EAR_THRESHOLD ? '闭眼' : (metrics.totalFrames > 0 ? '睁眼' : '等待检测');
+    statusEl.style.color = lastAvgEAR < EAR_THRESHOLD ? '#ff4444' : '#00ff88';
+  }
+
+  document.getElementById('rtBlink').textContent = metrics.blinkCount;
+  var perclos = metrics.totalFrames > 0
+    ? (metrics.perclosFrames / metrics.totalFrames * 100).toFixed(1) : '0.0';
+  document.getElementById('rtPerclos').textContent = perclos;
+  document.getElementById('rtYawn').textContent = metrics.yawnCount;
+  document.getElementById('rtNod').textContent = metrics.nodCount;
+  document.getElementById('rtTilt').textContent = metrics.tiltCount;
+}
+
+// ========== 计时器 ==========
+function startTimer() {
+  updateTimer();
+  testTimer = setInterval(updateTimer, 200);
+}
+
+function updateTimer() {
+  var elapsed = (Date.now() - testStartTime) / 1000;
+  var remaining = Math.max(0, testDuration - elapsed);
+  var pct = (elapsed / testDuration) * 100;
+
+  document.getElementById('progressBar').style.width = Math.min(100, pct) + '%';
+  document.getElementById('timeLeft').textContent = '剩余 ' + Math.ceil(remaining) + '秒';
+
+  if (remaining <= 0) {
+    endTest();
+  }
+}
+
+// ========== 结束测试 ==========
+function endTest() {
+  if (!isRunning) return;
+  isRunning = false;
+  clearInterval(testTimer);
+
+  var elapsed = (Date.now() - testStartTime) / 1000;
+  var duration = Math.min(elapsed, testDuration);
+
+  stopMonitoring();
+  calculateResult(duration);
+  showScreen('resultScreen');
+}
+
+function stopMonitoring() {
+  isRunning = false;
+  if (camera) {
+    try { camera.stop(); } catch(e) {}
+    camera = null;
+  }
+  var video = document.getElementById('video');
+  if (video && video.srcObject) {
+    video.srcObject.getTracks().forEach(function(t) { t.stop(); });
+    video.srcObject = null;
+  }
+}
+
+function resetMetrics() {
+  metrics = { blinkCount: 0, perclosFrames: 0, totalFrames: 0, closureDuration: 0, mouthOpenCount: 0, yawnCount: 0, nodCount: 0, tiltCount: 0 };
+  eyeState = { closed: false, closeTime: 0 };
+  mouthState = { open: false, openTime: 0, maxMAR: 0 };
+  headState = { currPitch: null, currRoll: null, lastPitch: null, lastRoll: null, lastNodTime: 0, lastTiltTime: 0 };
+  headPitchBaseline = null;
+  headPitchWindow = [];
+  nodSustainCount = 0;
+  tiltSustainCount = 0;
+  lastAvgEAR = 0;
+}
+
+// ========== 评分算法 ==========
+function calculateResult(duration) {
+  const dur = Math.max(duration, 1);
+  const durMin = dur / 60;
+
+  const blinkRate = metrics.blinkCount / durMin;
+  const perclos = metrics.totalFrames > 0 ? (metrics.perclosFrames / metrics.totalFrames * 100) : 0;
+  const closureDur = metrics.closureDuration;
+  const mouthOpenRate = metrics.mouthOpenCount / durMin;
+  const yawnRate = metrics.yawnCount / durMin;
+  const nodRate = metrics.nodCount / durMin;
+  const tiltRate = metrics.tiltCount / durMin;
+
+  // 各项评分
+  const scores = {
+    blink_rate: scoreMetric(blinkRate, 20, 35),
+    perclos: scorePerclos(perclos),
+    eye_closure: scoreClosure(closureDur),
+    mouth_state: scoreMetric(mouthOpenRate, 8, 20),
+    yawn_frequency: scoreYawn(yawnRate),
+    head_nodding: scoreMetric(nodRate, 8, 20),
+    head_tilting: scoreMetric(tiltRate, 5, 15),
+  };
+
+  // 加权
+  const weights = {
+    blink_rate: 0.15, perclos: 0.25, eye_closure: 0.20,
+    mouth_state: 0.10, yawn_frequency: 0.15, head_nodding: 0.10, head_tilting: 0.05
+  };
+
+  let total = 0;
+  for (const k in scores) total += scores[k] * weights[k];
+  total = Math.max(0, Math.min(100, Math.round(total)));
+
+  // 等级
+  let level, suggestion, color;
+  if (total < 20) { level = '正常'; suggestion = '无明显疲劳迹象，状态良好'; color = '#00ff88'; }
+  else if (total < 40) { level = '轻度疲劳'; suggestion = '有轻微疲劳迹象，建议适当休息'; color = '#66eeff'; }
+  else if (total < 60) { level = '中度疲劳'; suggestion = '疲劳程度较高，建议立即休息15-20分钟'; color = '#ffaa00'; }
+  else if (total < 80) { level = '重度疲劳'; suggestion = '严重疲劳，强烈建议停止活动并充分休息'; color = '#ff6644'; }
+  else { level = '极度疲劳'; suggestion = '极度疲劳，必须立即停止所有活动'; color = '#ff4466'; }
+
+  lastResult = {
+    duration, total, level, suggestion, color,
+    metrics: {
+      blinkCount: metrics.blinkCount,
+      blinkRate: blinkRate.toFixed(1),
+      perclos: perclos.toFixed(1),
+      closureDur: closureDur.toFixed(1),
+      mouthOpenCount: metrics.mouthOpenCount,
+      mouthOpenRate: mouthOpenRate.toFixed(1),
+      yawnCount: metrics.yawnCount,
+      yawnRate: yawnRate.toFixed(1),
+      nodCount: metrics.nodCount,
+      nodRate: nodRate.toFixed(1),
+      tiltCount: metrics.tiltCount,
+      tiltRate: tiltRate.toFixed(1),
+    }
+  };
+
+  renderResult(lastResult);
+}
+
+function scoreMetric(val, normal, threshold) {
+  if (val <= normal) return val / normal * 15;
+  if (val <= threshold) return 15 + (val - normal) / (threshold - normal) * 50;
+  return Math.min(100, 65 + (val - threshold) / threshold * 35);
+}
+
+function scorePerclos(v) {
+  if (v <= 5) return v / 5 * 10;
+  if (v <= 15) return 10 + (v - 5) / 10 * 45;
+  if (v <= 30) return 55 + (v - 15) / 15 * 35;
+  return Math.min(100, 90 + (v - 30) / 20 * 10);
+}
+
+function scoreClosure(v) {
+  if (v <= 0.5) return 0;
+  if (v <= 2) return (v - 0.5) / 1.5 * 50;
+  if (v <= 5) return 50 + (v - 2) / 3 * 40;
+  return Math.min(100, 90 + (v - 5) / 5 * 10);
+}
+
+function scoreYawn(v) {
+  if (v === 0) return 0;
+  if (v <= 2) return v / 2 * 40;
+  if (v <= 5) return 40 + (v - 2) / 3 * 40;
+  return Math.min(100, 80 + (v - 5) / 5 * 20);
+}
+
+// ========== 渲染结果 ==========
+function renderResult(r) {
+  const mins = Math.floor(r.duration / 60);
+  const secs = Math.floor(r.duration % 60);
+  document.getElementById('resultDuration').textContent =
+    `监测时长：${mins}分${secs}秒`;
+
+  const circle = document.getElementById('scoreCircle');
+  circle.style.setProperty('--score-pct', r.total + '%');
+  circle.style.borderColor = r.color;
+
+  const numEl = document.getElementById('scoreNum');
+  animateNumber(numEl, 0, r.total, 1200);
+
+  document.getElementById('fatigueLevel').textContent = r.level;
+  document.getElementById('fatigueLevel').style.color = r.color;
+  document.getElementById('fatigueSuggestion').textContent = r.suggestion;
+
+  const details = document.getElementById('resultDetails');
+  details.innerHTML = [
+    ['眨眼次数', r.metrics.blinkCount, '次'],
+    ['眨眼频率', r.metrics.blinkRate, '次/分'],
+    ['PERCLOS', r.metrics.perclos, '%'],
+    ['眼睑闭合', r.metrics.closureDur, '秒'],
+    ['嘴部张开', r.metrics.mouthOpenCount, '次'],
+    ['打哈欠', r.metrics.yawnCount, '次'],
+    ['点头/低头', r.metrics.nodCount, '次'],
+    ['歪头', r.metrics.tiltCount, '次'],
+  ].map(([label, value, unit]) => `
+    <div class="detail-card">
+      <div class="detail-label">${label}</div>
+      <div class="detail-value">${value} <span class="detail-unit">${unit}</span></div>
+    </div>
+  `).join('');
+}
+
+function animateNumber(el, from, to, duration) {
+  const start = performance.now();
+  function tick(now) {
+    const progress = Math.min(1, (now - start) / duration);
+    const eased = 1 - Math.pow(1 - progress, 3);
+    el.textContent = Math.round(from + (to - from) * eased);
+    if (progress < 1) requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
+}
+
+// ========== 导出报告 ==========
+function exportReport() {
+  if (!lastResult) return;
+  const r = lastResult;
+  const mins = Math.floor(r.duration / 60);
+  const secs = Math.floor(r.duration % 60);
+
+  const text = `
+========================================
+         疲劳监测报告
+========================================
+
+监测时长：${mins}分${secs}秒
+疲劳评分：${r.total}/100
+疲劳等级：${r.level}
+建议：${r.suggestion}
+
+----------------------------------------
+详细指标统计：
+----------------------------------------
+
+• 眨眼次数：${r.metrics.blinkCount} 次
+• 眨眼频率：${r.metrics.blinkRate} 次/分钟
+
+• PERCLOS：${r.metrics.perclos}%
+• 眼睛闭合总时长：${r.metrics.closureDur} 秒
+
+• 嘴巴张开次数：${r.metrics.mouthOpenCount} 次
+• 嘴巴张开频率：${r.metrics.mouthOpenRate} 次/分钟
+
+• 打哈欠次数：${r.metrics.yawnCount} 次
+• 打哈欠频率：${r.metrics.yawnRate} 次/分钟
+
+• 点头/低头次数：${r.metrics.nodCount} 次
+• 点头/低头频率：${r.metrics.nodRate} 次/分钟
+
+• 歪头次数：${r.metrics.tiltCount} 次
+• 歪头频率：${r.metrics.tiltRate} 次/分钟
+
+========================================
+生成时间：${new Date().toLocaleString('zh-CN')}
+`.trim();
+
+  const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `疲劳报告_${new Date().toISOString().slice(0, 10)}.txt`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+</script>
+</body>
+</html>
